@@ -29,7 +29,7 @@ setup(
     version=PACKAGE_VERSION,
     description="General purpose proxy and wrapper types",
     long_description = open('README.txt').read(),
-
+    url = "http://cheeseshop.python.org/pypi/ProxyTypes",
     author="Phillip J. Eby",
     author_email="peak@eby-sarna.com",
     license="PSF or ZPL",
