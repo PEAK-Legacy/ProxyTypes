@@ -51,7 +51,7 @@ class AbstractProxy(object):
     for name in 'repr str hash len abs complex int long float iter oct hex'.split():
         exec "def __%s__(self): return %s(self.__subject__)" % (name,name)
 
-    for name in 'cmp','coerce','divmod':
+    for name in 'cmp', 'coerce', 'divmod':
         exec "def __%s__(self,ob): return %s(self.__subject__,ob)" % (name,name)
 
     for name,op in [
@@ -85,7 +85,7 @@ class AbstractProxy(object):
     # Oddball signatures
 
     def __rdivmod__(self,ob):
-        return divmod(ob,self.__subject__)
+        return divmod(ob, self.__subject__)
 
     def __pow__(self,*args):
         return pow(self.__subject__,*args)
@@ -135,8 +135,8 @@ def __subject__(self, get_cache=get_cache, set_cache=set_cache):
         set_cache(self, get_callback(self)())
         return get_cache(self)
 
-LazyProxy.__subject__ = property(__subject__)
-
+LazyProxy.__subject__ = property(__subject__) #, set_cache)
+del __subject__
 
 
 

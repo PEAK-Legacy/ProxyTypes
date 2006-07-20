@@ -1,0 +1,97 @@
+This file tests proxies for some odd aspects of the Python object model.
+
+    >>> class Dummy(object):
+    ...     def __getitem__(self, key):
+    ... 	    print "get", key
+    ...     def __getslice__(self, s, e):
+    ... 	    print "get", s,e
+    ...     def __contains__(self, key):
+    ...         print "contains", key
+    ...     def __setitem__(self, key, val):
+    ... 	    print "set", key, val
+    ...     def __setslice__(self, s, e, val):
+    ... 	    print "set", s,e,val
+    ...     def __delitem__(self, key):
+    ... 	    print "del", key
+    ...     def __delslice__(self, s, e):
+    ... 	    print "del", s,e
+    ...     def __cmp__(self, x):
+    ...         print "comparing", x
+    ...         return 0
+
+>>> d = Dummy()
+>>> from peak.util.proxies import ObjectProxy
+>>> p = ObjectProxy(d)
+
+>>> d[1:2]
+get 1 2
+>>> p[1:2]
+get 1 2
+
+
+>>> d[1:2:3]
+get slice(1, 2, 3)
+>>> p[1:2:3]
+get slice(1, 2, 3)
+
+>>> d["x":"y"]
+get slice('x', 'y', None)
+>>> p["x":"y"]
+get slice('x', 'y', None)
+
+>>> "x" in d
+contains x
+False
+>>> "x" in p
+contains x
+False
+
+>>> d[1] = 1
+set 1 1
+>>> p[1] = 1
+set 1 1
+
+>>> d[1:2] = 3
+set 1 2 3
+>>> p[1:2] = 3
+set 1 2 3
+
+>>> d[1:2:3] = 4
+set slice(1, 2, 3) 4
+>>> p[1:2:3] = 4
+set slice(1, 2, 3) 4
+
+>>> del d[1]
+del 1
+>>> del p[1]
+del 1
+
+>>> del d[1:2]
+del 1 2
+>>> del p[1:2]
+del 1 2
+
+>>> del d[1:2:3]
+del slice(1, 2, 3)
+>>> del p[1:2:3]
+del slice(1, 2, 3)
+
+>>> del d["x":"y"]
+del slice('x', 'y', None)
+>>> del p["x":"y"]
+del slice('x', 'y', None)
+
+>>> cmp(d,27)
+comparing 27
+0
+>>> cmp(p,27)
+comparing 27
+0
+
+>>> cmp(27,d)
+comparing 27
+0
+>>> cmp(27,p)
+comparing 27
+0
+
