@@ -94,8 +94,8 @@ class AbstractProxy(object):
         self.__subject__ **= ob
         return self
 
-    def __rpow__(self,ob,*modulo):
-        return pow(ob, self.__subject__, *modulo)
+    def __rpow__(self,ob):
+        return pow(ob, self.__subject__)
 
 
 class ObjectProxy(AbstractProxy):
@@ -135,7 +135,7 @@ def __subject__(self, get_cache=get_cache, set_cache=set_cache):
         set_cache(self, get_callback(self)())
         return get_cache(self)
 
-LazyProxy.__subject__ = property(__subject__) #, set_cache)
+LazyProxy.__subject__ = property(__subject__, set_cache)
 del __subject__
 
 

@@ -18,6 +18,10 @@ This file tests proxies for some odd aspects of the Python object model.
     ...     def __cmp__(self, x):
     ...         print "comparing", x
     ...         return 0
+    ...     def __pow__(self,*args):
+    ...         print "pow", args
+    ...     def __rpow__(self,*args):
+    ...         print "rpow", args
 
 >>> d = Dummy()
 >>> from peak.util.proxies import ObjectProxy
@@ -94,4 +98,20 @@ comparing 27
 >>> cmp(27,p)
 comparing 27
 0
+
+>>> pow(d,27)
+pow (27,)
+>>> pow(p,27)
+pow (27,)
+
+>>> pow(d,51,27)
+pow (51, 27)
+>>> pow(p,51,27)
+pow (51, 27)
+
+>>> pow(19,d)
+rpow (19,)
+>>> pow(19,p)
+rpow (19,)
+
 

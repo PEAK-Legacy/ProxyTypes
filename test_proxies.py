@@ -11,8 +11,15 @@ class ProxyTestMixin:
         self.assertEqual(~p, ~v)
         self.assertEqual(p<<3, v<<3)
         self.assertEqual(p>>2, v>>2)
+
+        self.assertEqual(010101|p, 010101|v)
+        self.assertEqual(010101&p, 010101&v)
+        self.assertEqual(010101^p, 010101^v)
+        self.assertEqual(3<<p, 3<<v)
+        self.assertEqual(2>>p, 2>>v)
         for f in hex, oct:
             self.assertEqual(f(p), f(v))
+
         self.checkNumeric(v)
 
     def checkNumeric(self, v):
@@ -32,6 +39,13 @@ class ProxyTestMixin:
         self.assertEqual(p==7, v==7)
         self.assertEqual(p!=18, v!=18)
 
+        self.assertEqual(16+p, 16+v)
+        self.assertEqual(62-p, 62-v)
+        self.assertEqual(p+16, v+16)
+        self.assertEqual(p-62, v-62)
+        self.assertEqual(p%7, v%7)
+        self.assertEqual(p/6, v/6)
+
         self.assertEqual(22<p, 22<v)
         self.assertEqual(10>=p, 10>=v)
         self.assertEqual(9.0>p, 9.0>v)
@@ -43,7 +57,13 @@ class ProxyTestMixin:
         self.assertEqual(cmp(14,p), cmp(14,v))
 
         self.assertEqual(divmod(p,3), divmod(v,3))
-        if v: self.assertEqual(divmod(3,p), divmod(3,v))
+
+        if v:
+            self.assertEqual(divmod(3,p), divmod(3,v))
+            self.assertEqual(62//p, 62//v)
+            self.assertEqual(7/p, 7/v)
+            self.assertEqual(7%p, 7%v)
+
         self.checkBasics(v)
 
     def checkList(self, v):
@@ -78,8 +98,6 @@ class ProxyTestMixin:
         for f in bool, repr, str:
             self.assertEqual(f(p), f(v))
 
-
-
     def testNumbers(self):
         for i in range(20):
             self.checkInteger(i)
@@ -96,13 +114,43 @@ class ProxyTestMixin:
             self.checkList(UserList(d))
 
 
-class TestObjectProxy(ProxyTestMixin, unittest.TestCase):
-    proxied = ObjectProxy
+
+
+
+
+
+
+
+class InPlaceMixin(ProxyTestMixin):
+
+    def checkInteger(self, vv):
+        mk = lambda: (self.proxied(vv), vv)
+        p,v = mk(); p|=010101; v|=010101; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p&=010101; v&=010101; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p^=010101; v^=010101; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p<<=3; v<<=3; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p>>=3; v>>=3; self.assertEqual(p.__subject__, v)
+        ProxyTestMixin.checkInteger(self, vv)
+
+    def checkNumeric(self, vv):
+        mk = lambda: (self.proxied(vv), vv)
+        p,v = mk(); p+=17; v+=17; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p-=22; v-=22; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p*=15; v*=15; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p//=3; v//=3; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p**=2; v**=2; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p/=61; v/=61; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p%=19; v%=19; self.assertEqual(p.__subject__, v)
+        ProxyTestMixin.checkNumeric(self, vv)
+
 
 class TestCallbackProxy(ProxyTestMixin, unittest.TestCase):
     proxied = lambda self, v: CallbackProxy(lambda:v)
 
-class TestLazyProxy(ProxyTestMixin, unittest.TestCase):
+class TestObjectProxy(InPlaceMixin, unittest.TestCase):
+    proxied = ObjectProxy
+
+class TestLazyProxy(InPlaceMixin, unittest.TestCase):
     proxied = lambda self, v: LazyProxy(lambda:v)
 
 def additional_tests():
@@ -110,13 +158,6 @@ def additional_tests():
     return doctest.DocFileSuite(
         'README.txt', 'quirky-tests.txt', optionflags=doctest.ELLIPSIS,
     )
-
-
-
-
-
-
-
 
 
 
