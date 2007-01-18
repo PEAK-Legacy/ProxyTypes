@@ -137,7 +137,7 @@ and ``set_callback`` functions::
 Lazy Proxies
 ------------
 
-A ``LazyProxy`` is similar to a ``DynamicProxy``, but its callback is called
+A ``LazyProxy`` is similar to a ``CallbackProxy``, but its callback is called
 at most once, and then cached::
 
     >>> from peak.util.proxies import LazyProxy
@@ -213,7 +213,7 @@ object instead of the wrapper::
 
 Note that this means that all instance attributes must be implemented as either
 slots, properties, or have a default value defined in the class body (like the
-``name = None`` shown in the example above.
+``name = None`` shown in the example above).
 
 The ``CallbackWrapper`` and ``LazyWrapper`` base classes are basically the same
 as ``ObjectWrapper``, except that they use a callback or cached lazy callback
