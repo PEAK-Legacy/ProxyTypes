@@ -1,13 +1,14 @@
 #!/usr/bin/env python
 """Distutils setup file"""
-
-import ez_setup
-ez_setup.use_setuptools()
+try:
+    import ez_setup
+    ez_setup.use_setuptools()
+except: pass
 from setuptools import setup
 
 # Metadata
 PACKAGE_NAME = "ProxyTypes"
-PACKAGE_VERSION = "0.9"
+PACKAGE_VERSION = "0.10.0"
 PACKAGES = ['peak', 'peak.util']
 
 def get_description():
@@ -29,7 +30,8 @@ setup(
     version=PACKAGE_VERSION,
     description="General purpose proxy and wrapper types",
     long_description = open('README.txt').read(),
-    url = "http://cheeseshop.python.org/pypi/ProxyTypes",
+    long_description_content_type="text/x-rst",
+    url = "https://github.com/PEAK-Legacy/ProxyTypes#readme",
     author="Phillip J. Eby",
     author_email="peak@eby-sarna.com",
     license="PSF or ZPL",
