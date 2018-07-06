@@ -5,16 +5,16 @@ class ProxyTestMixin:
 
     def checkInteger(self, v):
         p = self.proxied(v)
-        self.assertEqual(p|010101, v|010101)
-        self.assertEqual(p&010101, v&010101)
-        self.assertEqual(p^010101, v^010101)
+        self.assertEqual(p|0x10101, v|0x10101)
+        self.assertEqual(p&0x10101, v&0x10101)
+        self.assertEqual(p^0x10101, v^0x10101)
         self.assertEqual(~p, ~v)
         self.assertEqual(p<<3, v<<3)
         self.assertEqual(p>>2, v>>2)
 
-        self.assertEqual(010101|p, 010101|v)
-        self.assertEqual(010101&p, 010101&v)
-        self.assertEqual(010101^p, 010101^v)
+        self.assertEqual(0x10101|p, 0x10101|v)
+        self.assertEqual(0x10101&p, 0x10101&v)
+        self.assertEqual(0x10101^p, 0x10101^v)
         self.assertEqual(3<<p, 3<<v)
         self.assertEqual(2>>p, 2>>v)
         for f in hex, oct:
@@ -108,12 +108,12 @@ class ProxyTestMixin:
             f += 2.25
 
     def testLists(self):
-        from UserList import UserList
+        try:
+            from UserList import UserList
+        except ImportError: from collections import UserList
         for d in [1,2], [3,42,59], [99,23,55]:
             self.checkList(d)
             self.checkList(UserList(d))
-
-
 
 
 
@@ -125,9 +125,9 @@ class InPlaceMixin(ProxyTestMixin):
 
     def checkInteger(self, vv):
         mk = lambda: (self.proxied(vv), vv)
-        p,v = mk(); p|=010101; v|=010101; self.assertEqual(p.__subject__, v)
-        p,v = mk(); p&=010101; v&=010101; self.assertEqual(p.__subject__, v)
-        p,v = mk(); p^=010101; v^=010101; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p|=0x10101; v|=0x10101; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p&=0x10101; v&=0x10101; self.assertEqual(p.__subject__, v)
+        p,v = mk(); p^=0x10101; v^=0x10101; self.assertEqual(p.__subject__, v)
         p,v = mk(); p<<=3; v<<=3; self.assertEqual(p.__subject__, v)
         p,v = mk(); p>>=3; v>>=3; self.assertEqual(p.__subject__, v)
         ProxyTestMixin.checkInteger(self, vv)

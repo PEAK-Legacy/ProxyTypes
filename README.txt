@@ -30,7 +30,7 @@ Here's a quick demo of the ``ObjectProxy`` type::
     True
 
     >>> p.__class__
-    <type 'int'>
+    <... 'int'>
 
     >>> p*2
     84
@@ -143,7 +143,7 @@ at most once, and then cached::
     >>> from peak.util.proxies import LazyProxy
 
     >>> def callback():
-    ...     print "called!"
+    ...     print("called!")
     ...     return 42
 
     >>> lazy = LazyProxy(callback)
@@ -193,7 +193,7 @@ wrapper instance, instead of the wrapped object.  For example::
     >>> w
     42
 
-    >>> print w
+    >>> print(w)
     The Ultimate Answer
 
     >>> w * 2
@@ -249,7 +249,7 @@ a dictionary of their own::
     >>> class NamedCallback(NamedMixin, CallbackWrapper): pass
     >>> class NamedLazy(NamedMixin, LazyWrapper): pass
 
-    >>> print NamedObject(42, "The Answer")
+    >>> print(NamedObject(42, "The Answer"))
     The Answer
 
     >>> n = NamedCallback(callback, "Test")
@@ -280,3 +280,5 @@ Mailing List
 
 Please direct questions regarding this package to the PEAK mailing list; see
 http://www.eby-sarna.com/mailman/listinfo/PEAK/ for details.
+
+.. ex: set ft=rst :

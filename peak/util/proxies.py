@@ -49,26 +49,26 @@ class AbstractProxy(object):
         return ob in self.__subject__
 
     for name in 'repr str hash len abs complex int long float iter oct hex'.split():
-        exec "def __%s__(self): return %s(self.__subject__)" % (name,name)
+        exec("def __%s__(self): return %s(self.__subject__)" % (name,name))
 
     for name in 'cmp', 'coerce', 'divmod':
-        exec "def __%s__(self,ob): return %s(self.__subject__,ob)" % (name,name)
+        exec("def __%s__(self,ob): return %s(self.__subject__,ob)" % (name,name))
 
     for name,op in [
         ('lt','<'), ('gt','>'), ('le','<='), ('ge','>='),
         ('eq','=='), ('ne','!=')
     ]:
-        exec "def __%s__(self,ob): return self.__subject__ %s ob" % (name,op)
+        exec("def __%s__(self,ob): return self.__subject__ %s ob" % (name,op))
 
     for name,op in [('neg','-'), ('pos','+'), ('invert','~')]:
-        exec "def __%s__(self): return %s self.__subject__" % (name,op)
+        exec("def __%s__(self): return %s self.__subject__" % (name,op))
 
     for name, op in [
         ('or','|'),  ('and','&'), ('xor','^'), ('lshift','<<'), ('rshift','>>'),
         ('add','+'), ('sub','-'), ('mul','*'), ('div','/'), ('mod','%'),
         ('truediv','/'), ('floordiv','//')
     ]:
-        exec (
+        exec((
             "def __%(name)s__(self,ob):\n"
             "    return self.__subject__ %(op)s ob\n"
             "\n"
@@ -78,7 +78,7 @@ class AbstractProxy(object):
             "def __i%(name)s__(self,ob):\n"
             "    self.__subject__ %(op)s=ob\n"
             "    return self\n"
-        )  % locals()
+        )  % locals())
 
     del name, op
 

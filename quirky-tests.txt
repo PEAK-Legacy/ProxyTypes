@@ -2,26 +2,26 @@ This file tests proxies for some odd aspects of the Python object model.
 
     >>> class Dummy(object):
     ...     def __getitem__(self, key):
-    ... 	    print "get", key
+    ... 	    print("get %s" % key)
     ...     def __getslice__(self, s, e):
-    ... 	    print "get", s,e
+    ... 	    print("get %s %s" % (s,e))
     ...     def __contains__(self, key):
-    ...         print "contains", key
+    ...         print("contains %s" % (key,))
     ...     def __setitem__(self, key, val):
-    ... 	    print "set", key, val
+    ... 	    print("set %s %s" % (key, val))
     ...     def __setslice__(self, s, e, val):
-    ... 	    print "set", s,e,val
+    ... 	    print("set %s %s %s" % (s,e,val))
     ...     def __delitem__(self, key):
-    ... 	    print "del", key
+    ... 	    print("del %s" %(key,))
     ...     def __delslice__(self, s, e):
-    ... 	    print "del", s,e
+    ... 	    print("del %s %s" % (s,e))
     ...     def __cmp__(self, x):
-    ...         print "comparing", x
+    ...         print("comparing %s" % (x,))
     ...         return 0
     ...     def __pow__(self,*args):
-    ...         print "pow", args
+    ...         print("pow %r" % (args,))
     ...     def __rpow__(self,*args):
-    ...         print "rpow", args
+    ...         print("rpow %r" % (args,))
 
 >>> d = Dummy()
 >>> from peak.util.proxies import ObjectProxy
@@ -114,4 +114,4 @@ rpow (19,)
 >>> pow(19,p)
 rpow (19,)
 
-
+.. ex: set ft=rst :
