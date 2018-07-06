@@ -1,6 +1,12 @@
 import unittest
 from peak.util.proxies import *
 
+try: long
+except NameError: long = int
+
+try: cmp
+except NameError: cmp = lambda a, b: (a>b)-(a<b)
+
 class ProxyTestMixin:
 
     def checkInteger(self, v):
@@ -32,6 +38,7 @@ class ProxyTestMixin:
         self.assertEqual(+p, +v)
         for f in abs, int, long, float, hash, complex:
             self.assertEqual(f(p), f(v))
+
         self.assertEqual(p<22, v<22)
         self.assertEqual(p>=10, v>=10)
         self.assertEqual(p>9.0, v>9.0)
@@ -65,6 +72,13 @@ class ProxyTestMixin:
             self.assertEqual(7%p, 7%v)
 
         self.checkBasics(v)
+
+
+
+
+
+
+
 
     def checkList(self, v):
         p = self.proxied(v)
@@ -114,11 +128,6 @@ class ProxyTestMixin:
         for d in [1,2], [3,42,59], [99,23,55]:
             self.checkList(d)
             self.checkList(UserList(d))
-
-
-
-
-
 
 
 class InPlaceMixin(ProxyTestMixin):

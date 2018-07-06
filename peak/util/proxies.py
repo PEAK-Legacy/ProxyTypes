@@ -23,8 +23,9 @@ class AbstractProxy(object):
         else:
             delattr(self.__subject__,attr)
 
-    def __nonzero__(self):
-        return bool(self.__subject__)
+    if hasattr(int, '__nonzero__'):
+        def __nonzero__(self):
+            return bool(self.__subject__)
 
     def __getitem__(self,arg):
         return self.__subject__[arg]
@@ -38,7 +39,6 @@ class AbstractProxy(object):
     def __getslice__(self,i,j):
         return self.__subject__[i:j]
 
-
     def __setslice__(self,i,j,val):
         self.__subject__[i:j] = val
 
@@ -48,11 +48,17 @@ class AbstractProxy(object):
     def __contains__(self,ob):
         return ob in self.__subject__
 
-    for name in 'repr str hash len abs complex int long float iter oct hex'.split():
-        exec("def __%s__(self): return %s(self.__subject__)" % (name,name))
+    for name in 'repr str hash len abs complex int long float iter oct hex bool operator.index math.trunc'.split():
+        if name in ('len', 'complex') or hasattr(int, '__%s__' % name.split('.')[-1]):
+            if '.' in name:
+                name = name.split('.')
+                exec("global %s; from %s import %s" % (name[1],name[0],name[1]))
+                name = name[1]
+            exec("def __%s__(self): return %s(self.__subject__)" % (name,name))
 
     for name in 'cmp', 'coerce', 'divmod':
-        exec("def __%s__(self,ob): return %s(self.__subject__,ob)" % (name,name))
+        if hasattr(int, '__%s__' % name):
+            exec("def __%s__(self,ob): return %s(self.__subject__,ob)" % (name,name))
 
     for name,op in [
         ('lt','<'), ('gt','>'), ('le','<='), ('ge','>='),
@@ -63,11 +69,23 @@ class AbstractProxy(object):
     for name,op in [('neg','-'), ('pos','+'), ('invert','~')]:
         exec("def __%s__(self): return %s self.__subject__" % (name,op))
 
+
+
+
+
+
+
+
+
+
+
+
     for name, op in [
         ('or','|'),  ('and','&'), ('xor','^'), ('lshift','<<'), ('rshift','>>'),
         ('add','+'), ('sub','-'), ('mul','*'), ('div','/'), ('mod','%'),
         ('truediv','/'), ('floordiv','//')
     ]:
+        if name == 'div' and not hasattr(int, '__div__'): continue
         exec((
             "def __%(name)s__(self,ob):\n"
             "    return self.__subject__ %(op)s ob\n"
@@ -98,6 +116,11 @@ class AbstractProxy(object):
         return pow(ob, self.__subject__)
 
 
+
+
+
+
+
 class ObjectProxy(AbstractProxy):
     """Proxy for a specific object"""
 
@@ -120,7 +143,6 @@ get_callback = CallbackProxy.__callback__.__get__
 CallbackProxy.__subject__ = property(lambda self, gc=get_callback: gc(self)())
 
 
-
 class LazyProxy(CallbackProxy):
     """Proxy for a lazily-obtained object, that is cached on first use"""
     __slots__ = "__cache__"
@@ -137,28 +159,6 @@ def __subject__(self, get_cache=get_cache, set_cache=set_cache):
 
 LazyProxy.__subject__ = property(__subject__, set_cache)
 del __subject__
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
@@ -198,7 +198,6 @@ class AbstractWrapper(AbstractProxy):
 class ObjectWrapper(ObjectProxy, AbstractWrapper):      __slots__ = ()
 class CallbackWrapper(CallbackProxy, AbstractWrapper):  __slots__ = ()
 class LazyWrapper(LazyProxy, AbstractWrapper):          __slots__ = ()
-
 
 
 

@@ -99,7 +99,13 @@ that gets incremented each time it's used, from zero to three::
 
     >>> from peak.util.proxies import CallbackProxy
 
-    >>> callback = iter(range(4)).next
+    >>> ct = -1
+    >>> def callback():
+    ...     global ct
+    ...     if ct == 3: raise StopIteration
+    ...     ct += 1
+    ...     return ct
+
     >>> counter = CallbackProxy(callback)
 
     >>> counter
